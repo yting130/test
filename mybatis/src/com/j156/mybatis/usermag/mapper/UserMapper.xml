@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j156.mybatis.usermag.mapper.UserMapper">
+	<resultMap type="UserBean" id="UserMap">
+		<id property="id" column="id" javaType="int" />
+		<result property="userName" column="user_name" javaType="string" />
+		<result property="userPwd" column="user_pwd" javaType="string" />
+
+		<collection property="indent" ofType="IndentBean">
+			<id property="id" column="indent_id" />
+			<result property="indentName" column="indent_name" />
+			<result property="indentPrice" column="indent_price" />
+			<result property="indentDate" column="indent_date" />
+		</collection>
+
+	</resultMap>
+
+
+	<select id="countUserByParams" resultType="int">
+		select count(*) from t_user
+		<include refid="commonSQL"></include>
+	</select>
+
+	<select id="listUserByParams" resultMap="UserMap">
+		select id,user_name,user_pwd from t_user
+		<include refid="commonSQL"></include>
+		limit #{params.index},#{params.rows}
+	</select>
+
+	<sql id="commonSQL">
+		<where>
+			<if test="params.userName != null and params.userName != ''">
+				and user_name like concat(#{params.userName},'%')
+			</if>
+			<if test="params.userPwd != null and params.userPwd != ''">
+				and user_pwd like concat (#{params.userPwd},'%')
+			</if>
+		</where>
+	</sql>
+</mapper>
